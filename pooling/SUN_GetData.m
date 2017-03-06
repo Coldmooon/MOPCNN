@@ -1,14 +1,17 @@
 function SUN_GetData(patchsize)
 
 
-load('SUNfilenames.mat');
-
+% load('SUNfilenames.mat');
+filenames = load('SUNfilenames.mat'); filenames = filenames.filenames;
 if(patchsize==256)
-	image_dir = '/lustre/scr/y/u/yunchao/SUN/256/';
+% 	image_dir = '/lustre/scr/y/u/yunchao/SUN/256/';
+    image_dir = './features/256/';
 elseif(patchsize==128)
-	image_dir = '/lustre/scr/y/u/yunchao/SUN/128/';
+	% image_dir = '/lustre/scr/y/u/yunchao/SUN/128/';
+    image_dir = './features/128/';
 elseif(patchsize==64)
-	image_dir = '/lustre/scr/y/u/yunchao/SUN/64/';
+% 	image_dir = '/lustre/scr/y/u/yunchao/SUN/64/';
+    image_dir = './features/64/';
 end
 
 
