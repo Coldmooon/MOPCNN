@@ -1,10 +1,15 @@
 function cleanSUN()
 
-matlabpool open;
-data_dir = '/netscr/yunchao/';
-load('SUNfilenames.mat');
+% matlabpool open;
+% data_dir = '/netscr/yunchao/';
+% load('SUNfilenames.mat');
 
-parfor i=1:length(filenames)
+% parpool local
+data_dir = '/media/coldmoon/ExtremePro960G/Datasets/SUN397/airport_inside/';
+filenames = load('SUNfilenames.mat'); filenames = filenames.filenames;
+
+% parfor i=1:length( filenames)
+for i=1:length( filenames)
     i
     name = [data_dir,filenames{i}];
     img = imread(name);
