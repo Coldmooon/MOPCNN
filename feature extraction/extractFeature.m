@@ -9,14 +9,31 @@ elseif(patchsize==64)
 elseif(patchsize==10)
 	model_def_file = '../../examples/imagenet_deploy.prototxt';
 end
-model_file = '../../examples/alexnet_train_iter_470000';
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The original code:
+% ------------------------------------------------------------------
+% model_file = '../../examples/alexnet_train_iter_470000';
+% 
+% % init caffe network (spews logging info)
+% caffe('init', model_def_file, model_file);
+% % set to use GPU or CPU
+% caffe('set_mode_cpu');
+% % put into test mode
+% caffe('set_phase_test');
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% init caffe network (spews logging info)
-caffe('init', model_def_file, model_file);
-% set to use GPU or CPU
-caffe('set_mode_cpu');
-% put into test mode
-caffe('set_phase_test');
+% Here, you need to change the shape of data layer in the
+% deploy.prototxt to match the patchsize. For example, if patchsize is 128,
+% the shape of input_data will be [36, 3, 227, 227] in which case the shape
+% of data layer in the deploy.prototxt should be changed to [36, 3, 227, 227].
+% -- by coldmoon
+model_def_file = '/home/coldmoon/ComputerVision/caffe/models/bvlc_alexnet/deploy.prototxt'
+model_file = '/home/coldmoon/ComputerVision/caffe/models/bvlc_alexnet/bvlc_alexnet.caffemodel';
+addpath('/home/coldmoon/ComputerVision/caffe/matlab');
+caffe.reset_all();
+caffe.set_mode_cpu();
+net = caffe.Net(model_def_file, model_file, 'test');
+
 % load mean
 d = load('ilsvrc_2012_mean');
 
@@ -52,7 +69,8 @@ for i=1:length(filenames)
     
 
     % do forward pass to get scores
-    S = caffe('forward', input_data);
+    % S = caffe('forward', input_data); % old interface
+    S = net.forward(input_data); % new interface
     S = reshape(S{1}, [4096 ss])';
 
 
