@@ -20,22 +20,33 @@ function scores = matcaffe_demo(im, use_gpu)
 %  scores = matcaffe_demo(im, 1);
 %  [score, class] = max(scores);
 
-model_def_file = '../../examples/imagenet_deploy.prototxt';
-% NOTE: you'll have to get the pre-trained ILSVRC network
-model_file = '../../examples/alexnet_train_iter_470000';
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The original code:
+% -------------------------------------------------------------
+% model_def_file = '../../examples/imagenet_deploy.prototxt';
+% % NOTE: you'll have to get the pre-trained ILSVRC network
+% model_file = '../../examples/alexnet_train_iter_470000';
+% 
+% % init caffe network (spews logging info)
+% caffe('init', model_def_file, model_file);
+% 
+% % set to use GPU or CPU
+% if exist('use_gpu', 'var') && use_gpu
+%   caffe('set_mode_gpu');
+% else
+%   caffe('set_mode_cpu');
+% end
+% 
+% % put into test mode
+% caffe('set_phase_test');
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% init caffe network (spews logging info)
-caffe('init', model_def_file, model_file);
-
-% set to use GPU or CPU
-if exist('use_gpu', 'var') && use_gpu
-  caffe('set_mode_gpu');
-else
-  caffe('set_mode_cpu');
-end
-
-% put into test mode
-caffe('set_phase_test');
+addpath('/home/coldmoon/ComputerVision/caffe/matlab');
+model_def_file = '/home/coldmoon/ComputerVision/caffe/models/bvlc_alexnet/deploy.prototxt'
+model_file = '/home/coldmoon/ComputerVision/caffe/models/bvlc_alexnet/bvlc_alexnet.caffemodel';
+caffe.reset_all();
+caffe.set_mode_cpu();
+net = caffe.Net(model_def_file, model_file, 'test');
 
 % prepare oversampled input
 tic;
@@ -44,7 +55,8 @@ toc;
 
 % do forward pass to get scores
 tic;
-scores = caffe('forward', input_data);
+% scores = caffe('forward', input_data); 
+scores = net.forward(input_data);
 toc;
 
 % average output scores
